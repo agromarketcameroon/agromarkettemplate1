@@ -50,6 +50,10 @@ export const Checkout: React.FC = () => {
       return;
     }
 
+    if (!mobileNumber.trim()) {
+      toast.error('Veuillez entrer votre numéro Mobile Money');
+      return;
+    }
     setIsProcessing(true);
 
     try {
@@ -62,7 +66,8 @@ export const Checkout: React.FC = () => {
         userId: user!.id,
         items,
         total: total + (total >= 50000 ? 0 : 2500) + (total * 0.1925),
-        paymentMethod,
+        paymentMethod: 'mobile-money',
+        mobileNumber,
         shippingAddress,
         status: 'confirmed',
         createdAt: new Date().toISOString()
@@ -71,7 +76,7 @@ export const Checkout: React.FC = () => {
       console.log('Order created:', order);
       
       clearCart();
-      toast.success('Commande passée avec succès!');
+      toast.success('Commande confirmée! Vous recevrez une notification Mobile Money pour le paiement.');
       navigate('/commande-confirmee');
     } catch (error) {
       toast.error('Erreur lors du traitement de la commande');
@@ -215,59 +220,42 @@ export const Checkout: React.FC = () => {
                   </h3>
                 </div>
                 
-                <div className="space-y-3">
-                  <label className="flex items-center space-x-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="mobile-money"
-                      checked={paymentMethod === 'mobile-money'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="text-green-600"
-                    />
-                    <Smartphone className="h-5 w-5 text-green-600" />
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <Smartphone className="h-6 w-6 text-green-600" />
                     <div>
-                      <p className="font-medium">Mobile Money</p>
-                      <p className="text-sm text-gray-600">
-                        MTN Mobile Money, Orange Money
+                      <p className="font-medium text-green-800">Mobile Money</p>
+                      <p className="text-sm text-green-600">
+                        Paiement sécurisé via MTN Mobile Money ou Orange Money
                       </p>
                     </div>
-                  </label>
-                  
-                  <label className="flex items-center space-x-3 p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="cash-on-delivery"
-                      checked={paymentMethod === 'cash-on-delivery'}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="text-green-600"
-                    />
-                    <MapPin className="h-5 w-5 text-green-600" />
-                    <div>
-                      <p className="font-medium">Paiement à la livraison</p>
-                      <p className="text-sm text-gray-600">
-                        Payez en espèces à la réception
-                      </p>
-                    </div>
-                  </label>
+                  </div>
                 </div>
                 
-                {paymentMethod === 'mobile-money' && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Numéro de téléphone Mobile Money
-                    </label>
-                    <input
-                      type="tel"
-                      value={mobileNumber}
-                      onChange={(e) => setMobileNumber(e.target.value)}
-                      placeholder="+237 690 123 456"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                      required
-                    />
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Numéro de téléphone Mobile Money *
+                  </label>
+                  <input
+                    type="tel"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value)}
+                    placeholder="+237 690 123 456"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Entrez le numéro de téléphone associé à votre compte Mobile Money
+                  </p>
+                </div>
+                
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-2">Opérateurs supportés:</h4>
+                  <div className="flex items-center space-x-4 text-sm text-blue-700">
+                    <span>📱 MTN Mobile Money</span>
+                    <span>📱 Orange Money</span>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -330,14 +318,22 @@ export const Checkout: React.FC = () => {
               
               <div className="mt-6 p-4 bg-green-50 rounded-lg">
                 <h4 className="font-semibold text-green-800 mb-2">
-                  Informations de livraison
+                  Informations importantes
                 </h4>
-                <p className="text-sm text-green-700">
+                <div className="space-y-2 text-sm text-green-700">
+                  <p>
+                    💳 Paiement sécurisé via Mobile Money
+                  </p>
+                  <p>
                   Livraison estimée: 2-5 jours ouvrables
-                </p>
-                <p className="text-sm text-green-700">
+                  </p>
+                  <p>
                   Suivi disponible après expédition
-                </p>
+                  </p>
+                  <p>
+                    📱 Vous recevrez une notification pour confirmer le paiement
+                  </p>
+                </div>
               </div>
             </div>
           </div>
