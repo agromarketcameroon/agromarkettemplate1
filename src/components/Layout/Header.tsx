@@ -15,8 +15,9 @@ export const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/boutique?search=${encodeURIComponent(searchQuery)}`);
+      navigate(`/boutique?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
+      setIsMenuOpen(false); // Close mobile menu after search
     }
   };
 
